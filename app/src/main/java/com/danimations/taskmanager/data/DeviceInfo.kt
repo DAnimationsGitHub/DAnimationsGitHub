@@ -12,6 +12,9 @@ import java.util.Locale
 data class InfoSection(val title: String, val rows: List<Pair<String, String>>)
 
 object DeviceInfo {
+    @Suppress("DEPRECATION")
+    private fun realMetrics(display: Display, out: DisplayMetrics) = display.getRealMetrics(out)
+
     fun collect(context: Context): List<InfoSection> {
         val am = context.getSystemService(ActivityManager::class.java)
         val mem = ActivityManager.MemoryInfo().also { am.getMemoryInfo(it) }
@@ -71,8 +74,7 @@ object DeviceInfo {
             val dm = context.getSystemService(DisplayManager::class.java)
             val d = dm.getDisplay(Display.DEFAULT_DISPLAY)
             val metrics = DisplayMetrics()
-            @Suppress("DEPRECATION")
-            d.getRealMetrics(metrics)
+            realMetrics(d, metrics)
             listOf(
                 "Resolution" to "${metrics.widthPixels} × ${metrics.heightPixels}",
                 "Density" to "${metrics.densityDpi} dpi",
